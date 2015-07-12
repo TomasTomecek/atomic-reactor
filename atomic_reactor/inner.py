@@ -16,6 +16,7 @@ import tempfile
 from atomic_reactor.build import InsideBuilder
 from atomic_reactor.plugin import PostBuildPluginsRunner, PreBuildPluginsRunner, InputPluginsRunner, PrePublishPluginsRunner, \
     PluginFailedException
+from atomic_reactor.plugins.pre_pull_base_image import PullBaseImagePlugin
 from atomic_reactor.source import get_source_instance_for
 from atomic_reactor.util import ImageName
 
@@ -287,12 +288,15 @@ class DockerBuildWorkflow(object):
         """
         self.builder = InsideBuilder(self.source, self.image)
         try:
-            if not self.dont_pull_base_image:
-                self.pulled_base_images = self.builder.pull_base_image(self.parent_registry,
-                                                                       insecure=self.parent_registry_insecure)
+            # XXX: Remove this after Sep 2015
+            has_pull_base_plugin = any(p['name'] == PullBaseImagePlugin.key
+                                       for p in self.prebuild_plugins_conf)
+            if not has_pull_base_plugin:
+                logger.warning("%s is missing in prebuild_plugins - please update your osbs-client!",
+                               PullBaseImagePlugin.key)
+                self.prebuild_plugins_conf.insert(0, { "name": PullBaseImagePlugin.key })
 
-            # time to run pre-build plugins, so they can access cloned repo,
-            # base image
+            # time to run pre-build plugins, so they can access cloned repo
             logger.info("running pre-build plugins")
             prebuild_runner = PreBuildPluginsRunner(self.builder.tasker, self, self.prebuild_plugins_conf,
                                                     plugin_files=self.plugin_files)
