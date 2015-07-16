@@ -252,6 +252,7 @@ class DockerBuildWorkflow(object):
         self.postbuild_plugins_conf = postbuild_plugins
         self.prebuild_results = {}
         self.postbuild_results = {}
+        self.build_is_failing = False
         self.plugin_files = plugin_files
 
         self.kwargs = kwargs
