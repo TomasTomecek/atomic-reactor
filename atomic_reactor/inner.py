@@ -309,6 +309,8 @@ class DockerBuildWorkflow(object):
             build_result = self.builder.build()
             self.build_logs = build_result.logs
 
+            self.build_has_failed = build_result.is_failed()
+
             if not build_result.is_failed():
                 self.built_image_inspect = self.builder.inspect_built_image()
 
