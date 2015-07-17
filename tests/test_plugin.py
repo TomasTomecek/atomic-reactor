@@ -65,7 +65,7 @@ def test_rpmqa_plugin():
 def test_build_plugin_failure():
     tasker = DockerTasker()
     workflow = DockerBuildWorkflow(SOURCE, "test-image")
-    assert workflow.build_is_failing is False
+    assert workflow.build_has_failed is False
     setattr(workflow, 'builder', X())
     setattr(workflow.builder, 'image_id', "asd123")
     setattr(workflow.builder, 'base_image', ImageName(repo='fedora', tag='21'))
@@ -77,7 +77,7 @@ def test_build_plugin_failure():
                                      "args": {'repourls': True}}])
     with pytest.raises(PluginFailedException):
         results = runner.run()
-    assert workflow.build_is_failing is True
+    assert workflow.build_has_failed is True
 
 
 class TestInputPluginsRunner(object):

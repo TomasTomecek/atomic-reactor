@@ -215,7 +215,7 @@ class BuildPluginsRunner(PluginsRunner):
         super(BuildPluginsRunner, self).__init__(plugin_class_name, plugins_conf, *args, **kwargs)
 
     def on_plugin_failed(self):
-        self.workflow.build_is_failing = True
+        self.workflow.build_has_failed = True
 
     def _translate_special_values(self, obj_to_translate):
         """
